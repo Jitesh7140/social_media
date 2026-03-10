@@ -1,64 +1,120 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+
+axios.get('http://localhost:5000/api/user')
+.then(response => { 
+    console.log(response.data);
+})
+.catch(error => {
+    console.error('Error fetching data:', error);
+}); 
+
 
 const HomePage = () => {
-  
   return (
-    <div className="min-h-screen bg-gray-50">
- 
+    <div className="min-h-screen bg-[#f0f2f5] font-sans">
+     
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 px-4">
+        
+        {/* --- Left Sidebar (Hidden on Mobile) --- */}
+        <aside className="hidden md:block col-span-1 sticky top-20 h-fit">
+          <ul className="space-y-4 font-medium text-gray-800">
+            <li className="flex items-center space-x-3 p-2 hover:bg-gray-200 rounded-lg cursor-pointer">
+              <div className="w-8 h-8 bg-blue-500 rounded-full"></div>
+              <span>User Name</span>
+            </li>
+            <li className="flex items-center space-x-3 p-2 hover:bg-gray-200 rounded-lg cursor-pointer">
+              <span className="text-xl">👥</span> <span>Friends</span>
+            </li>
+            <li className="flex items-center space-x-3 p-2 hover:bg-gray-200 rounded-lg cursor-pointer">
+              <span className="text-xl">🕒</span> <span>Memories</span>
+            </li>
+            <li className="flex items-center space-x-3 p-2 hover:bg-gray-200 rounded-lg cursor-pointer">
+              <span className="text-xl">🚩</span> <span>Pages</span>
+            </li>
+          </ul>
+        </aside>
 
-      {/* --- Hero Section --- */}
-      <main className="mt-16 mx-auto max-w-7xl px-4 sm:mt-24">
-        <div className="text-center">
-          <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-            <span className="block">Welcome to your new</span>
-            <span className="block text-indigo-600">Digital Workspace</span>
-          </h1>
-          <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-            Manage your projects, collaborate with your team, and track your progress all in one place. Simple, fast, and secure.
-          </p>
-          <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
-            <div className="rounded-md shadow">
-              <Link
-                to="/register"
-                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
-              >
-                Get Started
-              </Link>
+        {/* --- Main Feed --- */}
+        <main className="col-span-1 md:col-span-2 space-y-5">
+          
+          {/* Create Post Box */}
+          <div className="bg-white rounded-xl shadow-sm p-4">
+            <div className="flex space-x-3">
+              <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+              <input 
+                type="text" 
+                placeholder="What's on your mind, User?" 
+                className="bg-gray-100 hover:bg-gray-200  grow rounded-full px-4 outline-none transition"
+              />
             </div>
-            <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-              <a
-                href="#"
-                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10"
-              >
-                Live Demo
-              </a>
+            <hr className="my-3 border-gray-100" />
+            <div className="flex justify-around">
+               <button className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg flex-1 justify-center">
+                 <span className="text-red-500">📹</span> <span className="text-sm font-semibold text-gray-600">Live Video</span>
+               </button>
+               <button className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg flex-1 justify-center">
+                 <span className="text-green-500">🖼️</span> <span className="text-sm font-semibold text-gray-600">Photo/video</span>
+               </button>
+               <button className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg flex-1 justify-center">
+                 <span className="text-yellow-500">😊</span> <span className="text-sm font-semibold text-gray-600">Feeling/activity</span>
+               </button>
             </div>
           </div>
-        </div>
-      </main>
 
-      {/* --- Feature Grid (Optional) --- */}
-      <div className="mt-20 bg-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
-            <div className="text-center p-6">
-              <div className="text-indigo-600 text-3xl mb-4">⚡</div>
-              <h3 className="text-lg font-medium text-gray-900">Fast Performance</h3>
-              <p className="mt-2 text-gray-500 text-sm">Optimized for speed and high-efficiency workflows.</p>
-            </div>
-            <div className="text-center p-6">
-              <div className="text-indigo-600 text-3xl mb-4">🛡️</div>
-              <h3 className="text-lg font-medium text-gray-900">Secure Data</h3>
-              <p className="mt-2 text-gray-500 text-sm">Your data is encrypted and protected with enterprise security.</p>
-            </div>
-            <div className="text-center p-6">
-              <div className="text-indigo-600 text-3xl mb-4">📱</div>
-              <h3 className="text-lg font-medium text-gray-900">Mobile Ready</h3>
-              <p className="mt-2 text-gray-500 text-sm">Access your dashboard from any device, anywhere.</p>
-            </div>
+          {/* Sample Post */}
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+             <div className="p-4 flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                   <div className="w-10 h-10 bg-indigo-500 rounded-full"></div>
+                   <div>
+                      <p className="font-bold text-sm">Digital Workspace Official</p>
+                      <p className="text-xs text-gray-500">2 hours ago</p>
+                   </div>
+                </div>
+                <span className="text-gray-500 cursor-pointer">•••</span>
+             </div>
+             <div className="px-4 pb-3">
+                <p className="text-gray-800">Welcome to your new digital workspace! Let's get productive today. 🚀</p>
+             </div>
+             <div className="h-64 bg-indigo-100 flex items-center justify-center border-y border-gray-50">
+                <span className="text-indigo-600 font-bold text-2xl">Post Image Placeholder</span>
+             </div>
+             <div className="p-2">
+                <div className="flex justify-around border-t border-gray-100 pt-2">
+                   <button className="hover:bg-gray-100 flex-1 py-2 rounded-md font-semibold text-gray-600 text-sm">Like</button>
+                   <button className="hover:bg-gray-100 flex-1 py-2 rounded-md font-semibold text-gray-600 text-sm">Comment</button>
+                   <button className="hover:bg-gray-100 flex-1 py-2 rounded-md font-semibold text-gray-600 text-sm">Share</button>
+                </div>
+             </div>
           </div>
-        </div>
+
+        </main>
+
+        {/* --- Right Sidebar (Hidden on Mobile) --- */}
+        <aside className="hidden md:block col-span-1">
+           <div className="bg-white p-4 rounded-xl shadow-sm">
+              <h3 className="font-bold text-gray-500 mb-4">Sponsored</h3>
+              <div className="flex items-center space-x-3 mb-4 cursor-pointer">
+                 <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
+                 <div>
+                    <p className="text-sm font-semibold">Join the 2026 Dev Summit</p>
+                    <p className="text-xs text-gray-400">devsummit.com</p>
+                 </div>
+              </div>
+              <hr className="my-4" />
+              <h3 className="font-bold text-gray-500 mb-4">Contacts</h3>
+              <div className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
+                 <div className="relative">
+                    <div className="w-8 h-8 bg-green-500 rounded-full"></div>
+                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></div>
+                 </div>
+                 <span className="text-sm font-medium">Friend Name</span>
+              </div>
+           </div>
+        </aside>
+
       </div>
     </div>
   );

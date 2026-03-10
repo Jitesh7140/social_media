@@ -1,0 +1,3 @@
+export const getlikes = (req, res) => {
+    res.send(` Backend is running successfully`);
+}
