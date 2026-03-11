@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const multer = require('multer');
+const path = require('path');
 
 // modules other than Inbuild modules
 const db = require('./db');
@@ -22,16 +24,29 @@ app.use(cors(
     }
 ));
 app.use(cookieParser());
- 
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, '../frontend/public/uploads/')
+  },
+  filename: function (req, file, cb) {
+     
+    cb(null, Date.now() +  file.originalname ) // Appending extension
+  }
+})
+
+const upload = multer({ storage: storage })
+
+app.post('/api/upload', upload.single('file'), (req, res) => {
+  const file = req.file;
+    if (!file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+    }
+    res.status(200).json({ message: 'File uploaded successfully', filename: file.filename });
+}); 
 
 app.use('/api/user',userRoutes);
-app.use('/api/auth',authRoutes);
-
-app.use('/api/auth/logout',(req, res) => {
-    res.clearCookie('token');
-    res.json({ status: 'Success', message: 'Logged out successfully' });
-});
-
+app.use('/api/auth',authRoutes);  
 app.use('/api/posts',postsRoutes);
 app.use('/api/comments',commentsRoutes);
 app.use('/api/likes',likesRoutes);

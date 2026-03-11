@@ -60,7 +60,7 @@ export const postregister = async (req, res) => {
  
 
 
-export const postlogout =    (req, res) => {
+export const postlogout = (req, res) => {
     res.clearCookie('token');
     res.json({ status: 'Success', message: 'Logged out successfully' });
 };

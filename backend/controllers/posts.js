@@ -1,3 +1,53 @@
-export const getposts = (req, res) => {
-    res.send(` Backend is running successfully`);
+import db from '../db.js';
+import jwt from 'jsonwebtoken';
+import moment from 'moment';
+
+export const getposts = async (req, res) => { 
+  const token = req.cookies.token;
+  // console.log(token);
+  if (!token) return res.status(401).json("Not authenticated bhai!"); 
+
+  jwt.verify(token, "your_jwt_secret", (err, userInfo) => {
+    if (err) return res.status(403).json("Token is not valid!");
+
+    req.userInfo = userInfo;
+
+    const query = "SELECT p.*, u.name FROM post p JOIN users u ON p.user_id = u.id WHERE p.user_id = ? OR p.user_id IN( SELECT followedUser_id FROM followers WHERE followerUser_id = ? ) ORDER BY p.createdAt DESC; ";
+
+    // console.log("Executing query with user ID:", req.userInfo.id);
+    db.query(query, [req.userInfo.id, req.userInfo.id], (err, data) => {
+      // console.log("Query executed. Error:", err, "Data:", data);
+      if (err) return res.status(500).json(err);
+      return res.status(200).json(data);
+    });
+  });
+
+
+
+
+
+
+
+
+}
+
+export const addposts = async (req, res) => {
+  console.log("Add Post Request Received:", req.body);
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json("Not authenticated!");
+
+  jwt.verify(token, "your_jwt_secret", (err, userInfo) => {
+    if (err) return res.status(403).json("Token is not valid!");
+
+    const { desc, img   } = req.body;
+    const query = "INSERT INTO post(`post_dec`, `img`, `createdAt`, `user_id`) VALUES (?)";
+
+    const values = [desc, img, moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'), userInfo.id];
+
+    db.query(query, [values], (err, data) => {
+      if (err) return res.status(500).json(err);
+      return res.status(200).json("Post has been created.");
+    }
+    );
+  }); 
 }
