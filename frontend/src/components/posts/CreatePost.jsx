@@ -3,13 +3,58 @@ import { Image, MapPin, Users, X } from "lucide-react"; // X icon preview hatane
 import axios from "axios";
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { makerequest } from "../../axios";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 const CreatePost = ({ addPost, name = "Test2" }) => {
   const [text, setText] = useState("");
   const [selectedImage, setSelectedImage] = useState(null); // Actual file store karne ke liye
   const [preview, setPreview] = useState(null); // UI mein dikhane ke liye
-  const fileInputRef = useRef(null); // Input ko trigger karne ke liye
+  const fileInputRef = useRef(null); // Input ko trigger karne ke liye 
+  const [resp, setResp] = useState({}); // User data store karne ke liye
+  const [profileImage, setprofileImage] = useState(null); // User profile image store karne ke liye
+
+  const navigate = useNavigate();
+  // User ID ko req.data se le rahe hain
+
+useEffect(() => {
+  axios.get('http://localhost:5000/api/user/', {
+    withCredentials: true
+  })
+    .then(resp => {
+      if (resp.data.status === 'Success') {
+        axios.get('http://localhost:5000/api/user/find/' + resp.data.userId, {
+          withCredentials: true
+        })
+          .then(res => { // Maine yahan variable name 'res' kar diya hai confusion se bachne ke liye
+            if (res.data.status === 'Success') {
+              
+              // 1. Local Storage mein save karein
+              localStorage.setItem("currentUser", JSON.stringify(res.data.resp));
+              
+              // 2. State update karein
+              setResp(res.data);
+              setprofileImage(res.data.resp.profilePic);
+              
+            } else {
+              navigate('/login');
+            }
+          })
+          .catch((err) => console.log(err));
+      } else {
+        navigate('/login');
+      }
+    })
+    .catch((err) => console.log(err));
+}, []);
+
+  // if (!resp.resp) {
+  //   console.log("User data is not loaded yet.");
+  // } else {
+  //   console.log("User data loaded:", resp.resp.profilePic);
+
+  // }
 
   const upload = async (file) => {
     const formData = new FormData();
@@ -76,7 +121,7 @@ const CreatePost = ({ addPost, name = "Test2" }) => {
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 bg-gray-300 rounded-full overflow-hidden shrink-0">
           <img
-            src="https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001882.png"
+            src={resp?.resp?.profilePic ? "/uploads/" + resp.resp.profilePic : "/default-avatar.png"}
             alt="profile"
             className="w-full h-full object-cover"
           />
@@ -90,18 +135,18 @@ const CreatePost = ({ addPost, name = "Test2" }) => {
             rows="2"
           />
         </div>
-      {/* Image Preview Section */}
-      {preview && (
-    <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-gray-200 shrink-0 shadow-sm">
-      <button
-        onClick={() => { setPreview(null); setSelectedImage(null); }}
-        className="absolute top-1 right-1 bg-black/50 p-0.5 rounded-full text-white hover:bg-black z-10"
-      >
-        <X size={14} />
-      </button>
-      <img src={preview} alt="upload-preview" className="w-full h-full object-cover" />
-    </div>
-  )}
+        {/* Image Preview Section */}
+        {preview && (
+          <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-gray-200 shrink-0 shadow-sm">
+            <button
+              onClick={() => { setPreview(null); setSelectedImage(null); }}
+              className="absolute top-1 right-1 bg-black/50 p-0.5 rounded-full text-white hover:bg-black z-10"
+            >
+              <X size={14} />
+            </button>
+            <img src={preview} alt="upload-preview" className="w-full h-full object-cover" />
+          </div>
+        )}
       </div>
 
 

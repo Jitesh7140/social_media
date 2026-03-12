@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Heart, MessageCircle, Share2, MoreHorizontal } from "lucide-react";
 import moment from "moment";
+import { Link } from "react-router-dom";
 import Comments from "../comments/comments";
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { makerequest } from "../../axios";
@@ -11,6 +12,7 @@ const PostCard = ({ post }) => {
 
   // 1. Apni Auth Context ya LocalStorage se current user nikalen
   // Taaki pata chale ki "Main" (log-in user) kaun hoon
+  
   const currentUser = JSON.parse(localStorage.getItem("user"));
 
   // 2. Database se is post ke saare likes fetch karein
@@ -45,20 +47,25 @@ const PostCard = ({ post }) => {
         {/* Header Section */}
       <div className="p-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-linear-to-tr from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold shadow-inner">
-            {post.name ? post.name[0].toUpperCase() : 'U'}
+            {/* profile avatar and name link */}
+            <Link
+              to={`/profile/${post.user_id}`}
+              state={{ openUpdate: currentUser?.id === post.user_id }}
+              className="flex items-center space-x-2"
+            >
+              <div className="w-10 h-10 bg-linear-to-tr from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold shadow-inner">
+                {post.name ? post.name[0].toUpperCase() : 'U'}
+              </div>
+              <div>
+                <p className="font-bold text-sm text-gray-800 hover:underline cursor-pointer">
+                  {post.name || "Anonymous"}
+                </p>
+                <p className="text-[11px] text-gray-400 font-medium uppercase tracking-wide">
+                  {post.createdAt ? moment(post.createdAt).fromNow() : "Just Now"}
+                </p>
+              </div>
+            </Link>
           </div>
-          
-          <div>
-            <p className="font-bold text-sm text-gray-800 hover:underline cursor-pointer">
-              {post.name || "Anonymous"} 
-            </p>
-            <p className="text-[11px] text-gray-400 font-medium uppercase tracking-wide">
-              {post.createdAt ? moment(post.createdAt).fromNow() : "Just Now"}
-            </p>
-          </div>
-        </div>
-        
         <button className="text-gray-400 hover:bg-gray-100 p-1.5 rounded-full transition">
           <MoreHorizontal size={20} />
         </button>

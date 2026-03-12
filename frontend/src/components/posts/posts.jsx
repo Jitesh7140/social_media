@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { makerequest } from "../../axios";
-import PostCard from "./PostCard";
+import PostCard from "./postCard";
 
 const Posts = () => {
 

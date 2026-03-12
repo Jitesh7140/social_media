@@ -4,7 +4,6 @@ import moment from 'moment';
 
 export const getposts = async (req, res) => { 
   const token = req.cookies.token;
-  // console.log(token);
   if (!token) return res.status(401).json("Not authenticated bhai!"); 
 
   jwt.verify(token, "your_jwt_secret", (err, userInfo) => {
@@ -12,11 +11,19 @@ export const getposts = async (req, res) => {
 
     req.userInfo = userInfo;
 
-    const query = "SELECT p.*, u.name FROM post p JOIN users u ON p.user_id = u.id WHERE p.user_id = ? OR p.user_id IN( SELECT followedUser_id FROM followers WHERE followerUser_id = ? ) ORDER BY p.createdAt DESC; ";
+    // if a specific userId is requested, ignore feed logic and return that user's posts
+    if (req.query.userId) {
+      const query = "SELECT p.*, u.name FROM post p JOIN users u ON p.user_id = u.id WHERE p.user_id = ? ORDER BY p.createdAt DESC;";
+      db.query(query, [req.query.userId], (err, data) => {
+        if (err) return res.status(500).json(err);
+        return res.status(200).json(data);
+      });
+      return;
+    }
 
-    // console.log("Executing query with user ID:", req.userInfo.id);
-    db.query(query, [req.userInfo.id, req.userInfo.id], (err, data) => {
-      // console.log("Query executed. Error:", err, "Data:", data);
+    const query = "SELECT p.*, u.name FROM post p JOIN users u ON p.user_id = u.id    ORDER BY p.createdAt DESC; ";
+
+    db.query(query, ' ', (err, data) => {
       if (err) return res.status(500).json(err);
       return res.status(200).json(data);
     });

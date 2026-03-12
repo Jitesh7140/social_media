@@ -13,6 +13,7 @@ const authRoutes = require('./routes/auth');
 const postsRoutes = require('./routes/posts'); 
 const commentsRoutes = require('./routes/comments'); 
 const likesRoutes = require('./routes/likes'); 
+const relationshipRoutes = require('./routes/relationship');  
 
 
 const app = express(); 
@@ -39,6 +40,7 @@ const upload = multer({ storage: storage })
 
 app.post('/api/upload', upload.single('file'), (req, res) => {
   const file = req.file;
+  console.log("File received in upload endpoint:", file);
     if (!file) {
         return res.status(400).json({ message: 'No file uploaded' });
     }
@@ -50,6 +52,7 @@ app.use('/api/auth',authRoutes);
 app.use('/api/posts',postsRoutes);
 app.use('/api/comments',commentsRoutes);
 app.use('/api/likes',likesRoutes);
+app.use('/api/relationships',relationshipRoutes ); // Add this line to include relationship routes
 
   
 app.listen(5000, () => {

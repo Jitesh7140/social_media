@@ -5,6 +5,7 @@ import Home from './components/home/home.jsx';
 import Navbar from './components/navbar/navbar.jsx';
 import { Route, Routes, Navigate } from 'react-router-dom'; // Navigate bhi add kar diya hai default page ke liye
 import { QueryClient,  QueryClientProvider  } from '@tanstack/react-query'
+import Profile from './components/profile/Profile.jsx';
 
 function App() {
   const queryClient = new QueryClient();
@@ -16,6 +17,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/profile/:id" element={<Profile />} />
 
           <Route path="/register" element={<RegistrationPage />} />
           <Route path="/login" element={<LoginPage />} />
