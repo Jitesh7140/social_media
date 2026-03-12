@@ -1,19 +1,21 @@
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import { Heart, MessageCircle, Share2, MoreHorizontal } from "lucide-react";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import Comments from "../comments/comments";
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { makerequest } from "../../axios";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const PostCard = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
-  const queryClient = useQueryClient();
-
-  // 1. Apni Auth Context ya LocalStorage se current user nikalen
-  // Taaki pata chale ki "Main" (log-in user) kaun hoon
-  
+  const queryClient = useQueryClient(); 
   const currentUser = JSON.parse(localStorage.getItem("user"));
+  const navigate = useNavigate();
+  const [resp, setResp] = useState({}); // User data store karne ke liye
+  const [profileImage, setprofileImage] = useState(null); // User profile image store karne ke liye
+
 
   // 2. Database se is post ke saare likes fetch karein
   const { isLoading, data: data } = useQuery({
@@ -37,6 +39,38 @@ const PostCard = ({ post }) => {
       queryClient.invalidateQueries(["likes", post.id]);
     },
   });
+ 
+
+
+  
+  useEffect(() => {
+    axios.get('http://localhost:5000/api/user/', {
+      withCredentials: true
+    })
+      .then(resp => {
+        if (resp.data.status === 'Success') {
+          axios.get('http://localhost:5000/api/user/find/' + post.user_id, {
+            withCredentials: true
+          })
+            .then(res => { // Maine yahan variable name 'res' kar diya hai confusion se bachne ke liye
+              if (res.data.status === 'Success') { 
+                console.log("User data loaded:", res.data.resp.profilePic);
+
+                // 2. State update karein
+                setResp(res.data);
+                setprofileImage(res.data.resp.profilePic);
+
+              } else {
+                navigate('/login');
+              }
+            })
+            .catch((err) => console.log(err));
+        } else {
+          navigate('/login');
+        }
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   const handleLike = () => {
     mutation.mutate();
@@ -44,28 +78,34 @@ const PostCard = ({ post }) => {
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-4 transition hover:shadow-md">
-        {/* Header Section */}
+      {/* Header Section */}
       <div className="p-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
-            {/* profile avatar and name link */}
-            <Link
-              to={`/profile/${post.user_id}`}
-              state={{ openUpdate: currentUser?.id === post.user_id }}
-              className="flex items-center space-x-2"
-            >
-              <div className="w-10 h-10 bg-linear-to-tr from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold shadow-inner">
-                {post.name ? post.name[0].toUpperCase() : 'U'}
-              </div>
-              <div>
-                <p className="font-bold text-sm text-gray-800 hover:underline cursor-pointer">
-                  {post.name || "Anonymous"}
-                </p>
-                <p className="text-[11px] text-gray-400 font-medium uppercase tracking-wide">
-                  {post.createdAt ? moment(post.createdAt).fromNow() : "Just Now"}
-                </p>
-              </div>
-            </Link>
-          </div>
+          {/* profile avatar and name link */}
+          <Link
+            to={`/profile/${post.user_id}`}
+            state={{ openUpdate: currentUser?.id === post.user_id }}
+            className="flex items-center space-x-2"
+          >
+            <div className="w-10 h-10 bg-linear-to-tr from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold shadow-inner">
+              <img
+                src={resp?.resp?.profilePic ? "/uploads/" + resp.resp.profilePic : "/default-avatar.png"}
+                alt="profile"
+                className="w-full h-full object-cover rounded-4xl"
+              />
+              {/* {post.name ? post.name[0].toUpperCase() : 'U'} */}
+
+            </div>
+            <div>
+              <p className="font-bold text-sm text-gray-800 hover:underline cursor-pointer">
+                {post.name || "Anonymous"}
+              </p>
+              <p className="text-[11px] text-gray-400 font-medium uppercase tracking-wide">
+                {post.createdAt ? moment(post.createdAt).fromNow() : "Just Now"}
+              </p>
+            </div>
+          </Link>
+        </div>
         <button className="text-gray-400 hover:bg-gray-100 p-1.5 rounded-full transition">
           <MoreHorizontal size={20} />
         </button>
@@ -122,8 +162,8 @@ const PostCard = ({ post }) => {
             </button>
 
             <span className={`text-sm font-bold ml-2  text-gray-800"}`}>
-              {likesData?.length || 0} 
-            <span className="text-sm font-bold ml-2 text-gray-800">Likes</span>
+              {likesData?.length || 0}
+              <span className="text-sm font-bold ml-2 text-gray-800">Likes</span>
             </span>
 
 

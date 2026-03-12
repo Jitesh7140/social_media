@@ -17,8 +17,7 @@ const Posts = () => {
 
   return (
     <div className="space-y-4">
-      {data.map((post) => (
-       
+      {data.map((post) => ( 
         <PostCard key={post.id} post={post} />
       ))}
     </div>

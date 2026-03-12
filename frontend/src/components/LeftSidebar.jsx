@@ -35,7 +35,7 @@ const LeftSidebar = () => {
           <div className="w-8 h-8 bg-blue-500 rounded-full"> </div>
           <span>{name}</span>
         </li>
-
+{/* 
         <li className="flex items-center space-x-3 p-2 hover:bg-gray-200 rounded-lg cursor-pointer">
           <span className="text-xl">👥</span>
           <span>Friends</span>
@@ -49,7 +49,7 @@ const LeftSidebar = () => {
         <li className="flex items-center space-x-3 p-2 hover:bg-gray-200 rounded-lg cursor-pointer">
           <span className="text-xl">🚩</span>
           <span>Pages</span>
-        </li>
+        </li> */}
       </ul>
     </aside>
   );

@@ -7,6 +7,11 @@ const Navbar = () => {
   const [auth, setAuth] = useState(false);
   const [name, setName] = useState('');
   const navigate = useNavigate();
+  const [profileImage, setProfileImage] = useState(() => {
+  const user = localStorage.getItem("currentUser");
+  return user ? JSON.parse(user).profilePic : null;
+});
+ 
 
   axios.defaults.withCredentials = true;
 
@@ -50,7 +55,7 @@ const Navbar = () => {
       {/* --- Left: Logo & Search --- */}
       <div className="flex items-center space-x-2 min-w-0">
         <Link to="/home" className="bg-blue-600 text-white font-bold text-2xl md:text-3xl w-9 h-9 md:w-10 md:h-10 flex items-center justify-center rounded-full   shrink-0">
-          f
+          J
         </Link>
         {/* Search Bar: Mobile par sirf icon dikhega ya hide ho jayega */}
         <div className="flex items-center bg-gray-100 rounded-full px-3 py-2 w-10 h-10 md:w-64 md:h-10 overflow-hidden">
@@ -76,7 +81,7 @@ const Navbar = () => {
             <div className="flex items-center hover:bg-gray-100 rounded-full p-1 cursor-pointer transition">
               {/* Avatar Circle */}
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs uppercase shadow-sm">
-                {name ? name.charAt(0) : 'U'}
+                <img src={profileImage ? "/uploads/" + profileImage : "/default-avatar.png"} alt="Profile" className="w-full h-full object-cover rounded-full" />
               </div>
 
               {/* Name Text */}
