@@ -1,4 +1,3 @@
-Here is a professional and comprehensive README.md draft for your GitHub repository in English. It covers the technical details and features of your social media app.
 
 🌐 Social Media Full-Stack Application
 A modern, full-featured social media platform that allows users to connect, share posts, and manage their professional/personal profiles. Built with a focus on performance, scalability, and a clean user experience.
